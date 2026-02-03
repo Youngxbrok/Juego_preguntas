@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Juego de trivia interactivo para poner a prueba tus conocimientos.">
+    <title>Trivia Challenge</title>
+    
+    <link rel="icon" type="image/png" href="icons/flaticon-game.png">
+    
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+
+    <header class="zona_cabecera">
+        <h1>Trivia Challenge</h1>
+        <button id="cerrar-sesion" class="btn-secundario">Cerrar sesión</button>
+    </header>
+
+    <main class="zona_juego">
+
+        <div class="zona_estado">
+            <div class="estado-item">
+                <span class="icono">🏆</span> 
+                Puntaje: <span id="puntaje">0</span>
+            </div>
+            <div class="estado-item">
+                <span class="icono">⏳</span> 
+                Tiempo: <span id="tiempo">30</span>s
+            </div>
+        </div>
+
+        <section class="zona_preguntas_respuestas">
+            
+            <article id="texto-pregunta">
+                Cargando pregunta...
+            </article>
+
+            <div class="contenedor-opciones">
+                <button type="button" class="btn-opcion">Opción A</button>
+                <button type="button" class="btn-opcion">Opción B</button>
+                <button type="button" class="btn-opcion">Opción C</button>
+            </div>
+
+            <div class="feedback-container">
+                <p id="mensaje" class="mensaje"></p>
+                <p id="nivel" class="nivel"></p>
+            </div>
+        </section>
+
+        <div class="zona_reinicio">
+            <button id="boton-reiniciar" style="display:none;">🔄 Jugar de nuevo</button>
+        </div>
+
+    </main>
+
+    <footer class="zona_baja_informacion">
+        <p>&copy; 2026 Todos los derechos reservados | younxbrock</p>
+        <nav class="redes-sociales">
+            <a href="https://instagram.com/tu_usuario" target="_blank" rel="noopener noreferrer">Instagram</a> |
+            <a href="https://discord.com/users/tu_usuario" target="_blank" rel="noopener noreferrer">Discord</a> |
+            <a href="https://github.com/tu_usuario" target="_blank" rel="noopener noreferrer">Github</a>
+        </nav>
+    </footer>
+
+    <noscript>
+        <p style="text-align:center; color:red;">Necesitas activar JavaScript para jugar.</p>
+    </noscript>
+
+    <script src="app/banco_pregunta.js" defer></script>
+    <script src="app/app.js" defer></script>
+</body>
+</html>

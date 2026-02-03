@@ -1,0 +1,234 @@
+/* ==============================
+   RESET BÁSICO
+============================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ==============================
+   BODY
+============================== */
+body {
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ==============================
+   CABECERA
+============================== */
+.zona_cabecera {
+    width: 100%;
+    background: #4e54c8;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.zona_cabecera h1 {
+    font-size: 2rem;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+}
+
+.zona_cabecera button {
+    background: #ff6f61;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s, background 0.2s;
+    color: white;
+}
+
+.zona_cabecera button:hover {
+    background: #ff3b2f;
+    transform: scale(1.05);
+}
+
+/* ==============================
+   ZONA DE JUEGO
+============================== */
+.zona_juego {
+    width: 90%;
+    max-width: 800px; /* Aumenté un poco el ancho máximo para que quepan 3 botones bien */
+    background: rgba(255,255,255,0.05);
+    padding: 40px 30px;
+    margin: 60px auto 30px auto;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Estado del juego (Puntaje/Tiempo) */
+.zona_estado {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: rgba(0,0,0,0.2);
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+
+/* Pregunta (Texto) */
+.zona_preguntas_respuestas article {
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffd700;
+    min-height: 60px; /* Evita saltos si la pregunta es muy corta */
+}
+
+/* ==============================
+   NUEVO: CONTENEDOR DE OPCIONES (GRID)
+============================== */
+.contenedor-opciones {
+    display: grid;
+    /* Por defecto (móvil) 1 sola columna */
+    grid-template-columns: 1fr; 
+    gap: 15px; /* Espacio entre botones */
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Botones de opciones */
+.zona_preguntas_respuestas button {
+    display: inline-block;
+    width: 100%; /* Ahora ocupan el 100% de su celda del grid */
+    padding: 15px 10px;
+    border-radius: 15px;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: #fff;
+    transition: transform 0.2s, background 0.3s, box-shadow 0.2s;
+    box-shadow: 0 4px 0 #0056b3; /* Efecto 3D sutil */
+}
+
+.zona_preguntas_respuestas button:active {
+    transform: translateY(4px); /* Efecto de presionar */
+    box-shadow: none;
+}
+
+.zona_preguntas_respuestas button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #00ffb3, #00c6ff);
+    box-shadow: 0 6px 0 #008f7a;
+}
+
+/* Mensajes y Nivel */
+.feedback-container {
+    margin-top: 25px;
+    min-height: 40px;
+}
+
+.mensaje {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.nivel {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* ==============================
+   BOTÓN DE REINICIO
+============================== */
+.zona_reinicio {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.zona_reinicio button {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #ff512f, #dd2476);
+    color: #fff;
+    transition: transform 0.2s, background 0.3s;
+    box-shadow: 0 4px 10px rgba(221, 36, 118, 0.4);
+}
+
+.zona_reinicio button:hover {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #ff6a00, #f13c6f);
+}
+
+/* ==============================
+   FOOTER
+============================== */
+.zona_baja_informacion {
+    width: 100%;
+    text-align: center;
+    background: #4e54c8;
+    padding: 15px 0;
+    margin-top: auto;
+    font-size: 0.9rem;
+}
+
+.zona_baja_informacion a {
+    color: #ffd700;
+    text-decoration: none;
+    transition: color 0.2s;
+    margin: 0 5px;
+}
+
+.zona_baja_informacion a:hover {
+    color: #fff;
+}
+
+/* ==============================
+   RESPONSIVE (MEDIA QUERIES)
+============================== */
+
+/* Para Tablets y PC (Pantallas mayores a 768px) */
+@media (min-width: 768px) {
+    .contenedor-opciones {
+        /* Aquí cambiamos a 3 columnas automáticamente */
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Para Móviles pequeños */
+@media (max-width: 700px) {
+    .zona_juego {
+        margin-top: 20px;
+        padding: 20px 15px;
+        width: 95%;
+    }
+    
+    .zona_cabecera h1 {
+        font-size: 1.5rem;
+    }
+
+    .zona_estado {
+        flex-direction: column;
+        gap: 5px;
+        align-items: center;
+        font-size: 1rem;
+    }
+}

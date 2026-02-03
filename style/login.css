@@ -1,0 +1,82 @@
+/* ==============================
+   LOGIN COLORES Y ESTILO
+============================== */
+.login-container {
+    width: 90%;
+    max-width: 400px;
+    background: linear-gradient(135deg, #4e54c8, #8f94fb); /* Fondo degradado */
+    padding: 40px 30px;
+    margin: 100px auto;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+}
+
+.login-container h1 {
+    margin-bottom: 30px;
+    font-size: 2rem;
+    text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+}
+
+.login-container form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.login-container label {
+    text-align: left;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #ffd700; /* Amarillo brillante para etiquetas */
+}
+
+.login-container input {
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1rem;
+    outline: none;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+}
+
+.login-container input::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+
+.login-container input:focus {
+    box-shadow: 0 0 12px #00c6ff;
+    background: rgba(255,255,255,0.25);
+}
+
+.login-container button {
+    padding: 15px 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #ff6a00, #ff3b2f); /* Botón rojo degradado */
+    color: #fff;
+    transition: transform 0.2s, background 0.3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.login-container button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #ff8a3c, #ff1c1c);
+}
+
+/* RESPONSIVE LOGIN */
+@media (max-width: 500px) {
+    .login-container {
+        margin: 50px auto;
+        padding: 30px 20px;
+    }
+}
