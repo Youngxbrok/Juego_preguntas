@@ -1,6 +1,8 @@
 class TriviaGame {
-    constructor(preguntas, config = {}) {
-        // ... (Configuración igual que antes) ...
+    constructor(config = {}) {
+        // Validación de usuario
+        this.verificarSesion();
+
         this.config = {
             tiempoBase: 30,
             preguntasPorPartida: 9,
@@ -12,17 +14,21 @@ class TriviaGame {
         this.estado = {
             puntaje: 0,
             indicePregunta: 0,
-            preguntasSesion: [], // Aquí guardaremos las preguntas ya mezcladas
+            preguntasSesion: [],
             tiempoRestante: 0,
             intervaloID: null,
             tiempoActualPorPregunta: this.config.tiempoBase
         };
 
-        // ... (Referencias al DOM igual que antes) ...
+        // --- CORRECCIÓN DE SELECTORES AQUÍ ---
+        // Usamos los IDs y Clases exactos de tu HTML
         this.dom = {
-            pregunta: document.querySelector(".zona_preguntas_respuestas article"),
-            botones: document.querySelectorAll(".zona_preguntas_respuestas button"),
-            // ... resto de selectores ...
+            // Antes buscabas por etiqueta, ahora usamos el ID directo
+            pregunta: document.getElementById("texto-pregunta"), 
+            
+            // Usamos la clase especifica de los botones
+            botones: document.querySelectorAll(".btn-opcion"), 
+            
             puntaje: document.getElementById("puntaje"),
             tiempo: document.getElementById("tiempo"),
             mensaje: document.getElementById("mensaje"),
@@ -31,19 +37,34 @@ class TriviaGame {
             btnCerrar: document.getElementById("cerrar-sesion")
         };
 
+        console.log("Juego inicializado. Elementos encontrados:", this.dom); // Debug
         this.initEvents();
     }
 
-    // ... (initEvents y mezclarArray igual que antes) ...
+    verificarSesion() {
+        if (!localStorage.getItem("usuario")) {
+            window.location.href = "index.html";
+        }
+    }
+
     initEvents() {
-        this.dom.btnReiniciar.addEventListener("click", () => this.iniciarJuego());
-        this.dom.btnCerrar.addEventListener("click", () => {
-             localStorage.clear();
-             alert("Cierre de sesión correcto");
-             window.location.href = "index.html";
-        });
+        if (this.dom.btnReiniciar) {
+            this.dom.btnReiniciar.addEventListener("click", () => this.iniciarJuego());
+        }
+        
+        if (this.dom.btnCerrar) {
+            this.dom.btnCerrar.addEventListener("click", () => {
+                localStorage.clear();
+                window.location.href = "index.html";
+            });
+        }
+
+        // Asignar eventos a los botones de respuesta
         this.dom.botones.forEach((boton, index) => {
-            boton.addEventListener("click", () => this.verificarRespuesta(index));
+            boton.addEventListener("click", () => {
+                console.log(`Click en botón ${index}`); // Debug para ver si funciona el click
+                this.verificarRespuesta(index);
+            });
         });
     }
 
@@ -56,34 +77,33 @@ class TriviaGame {
         return copia;
     }
 
-    // ==========================================
-    // NUEVA LÓGICA INTEGRADA AQUÍ 👇
-    // ==========================================
     mezclarOpcionesDePregunta(pregunta) {
-        // 1. Creamos objetos temporales para no perder la correcta
         const opcionesMezcladas = pregunta.opciones.map((texto, index) => ({
             texto,
             esCorrecta: index === pregunta.correcta
         }));
-
-        // 2. Usamos el mezclador de la clase (Fisher-Yates) para mayor aleatoriedad
-        // (O puedes usar .sort(() => Math.random() - 0.5) si prefieres)
+        
         const opcionesRandom = this.mezclarArray(opcionesMezcladas);
-
-        // 3. Actualizamos la pregunta con el nuevo orden
+        
         pregunta.opciones = opcionesRandom.map(op => op.texto);
         pregunta.correcta = opcionesRandom.findIndex(op => op.esCorrecta);
     }
 
     iniciarJuego() {
+        console.log("Iniciando juego...");
+        
+        // Verificamos si cargaron las preguntas
+        if (!window.bancoPreguntas || window.bancoPreguntas.length === 0) {
+            alert("Error CRÍTICO: No se encontraron preguntas. Revisa banco_pregunta.js");
+            this.dom.pregunta.textContent = "Error: No hay preguntas cargadas.";
+            return;
+        }
+
         this.estado.puntaje = 0;
         this.estado.indicePregunta = 0;
         this.estado.tiempoActualPorPregunta = this.config.tiempoBase;
         
-        // Clonamos las preguntas para no modificar el banco original "bancoPreguntas"
-        // Esto es importante porque vamos a modificar el orden de las opciones internamente
-        const bancoCopia = JSON.parse(JSON.stringify(window.bancoPreguntas || []));
-        
+        const bancoCopia = JSON.parse(JSON.stringify(window.bancoPreguntas));
         this.estado.preguntasSesion = this.mezclarArray(bancoCopia).slice(0, this.config.preguntasPorPartida);
 
         this.actualizarPuntajeUI();
@@ -91,47 +111,45 @@ class TriviaGame {
         this.dom.btnReiniciar.style.display = "none";
         this.toggleBotones(true);
         
+        // ¡Aquí es donde se actualiza la pantalla!
         if (this.estado.preguntasSesion.length > 0) {
             this.renderizarPregunta();
+        } else {
+            console.error("El banco de preguntas estaba vacío después de filtrar.");
         }
     }
 
     renderizarPregunta() {
         const preguntaActual = this.estado.preguntasSesion[this.estado.indicePregunta];
-
-        // 👇 APLICAMOS LA MEZCLA JUSTO ANTES DE MOSTRAR 👇
         this.mezclarOpcionesDePregunta(preguntaActual);
 
-        // UI Textos
+        // Actualizar texto en pantalla
         this.dom.pregunta.textContent = preguntaActual.pregunta;
-        this.dom.mensaje.textContent = "";
-
-        // Lógica de dificultad (tiempo)
-        if (this.estado.indicePregunta > 0 && this.estado.indicePregunta % 3 === 0) {
-            this.estado.tiempoActualPorPregunta = Math.max(5, this.estado.tiempoActualPorPregunta - this.config.reduccionTiempoNivel);
-        }
-
-        // Mostrar Nivel
-        const nivelCalculado = Math.floor((30 - this.estado.tiempoActualPorPregunta) / 10) + 1;
-        this.dom.nivel.textContent = `Nivel ${nivelCalculado} – Pregunta ${this.estado.indicePregunta + 1} / ${this.config.preguntasPorPartida}`;
-
-        // Renderizar Botones
+        
+        // Actualizar botones
         this.dom.botones.forEach((boton, index) => {
             const opcionTexto = preguntaActual.opciones[index];
             if (opcionTexto) {
                 boton.textContent = opcionTexto;
-                boton.style.display = "inline-block";
+                boton.style.display = "inline-block"; // Asegura que sea visible
                 boton.disabled = false;
-                boton.className = ""; 
+                boton.className = "btn-opcion"; // Resetea clases (quita colores previos)
             } else {
                 boton.style.display = "none";
             }
         });
 
+        // Nivel y tiempo
+        if (this.estado.indicePregunta > 0 && this.estado.indicePregunta % 3 === 0) {
+            this.estado.tiempoActualPorPregunta = Math.max(5, this.estado.tiempoActualPorPregunta - this.config.reduccionTiempoNivel);
+        }
+        
+        const nivelCalculado = Math.floor((30 - this.estado.tiempoActualPorPregunta) / 10) + 1;
+        this.dom.nivel.textContent = `Nivel ${nivelCalculado} – Pregunta ${this.estado.indicePregunta + 1} / ${this.config.preguntasPorPartida}`;
+
         this.iniciarTemporizador();
     }
 
-    // ... (El resto de métodos: iniciarTemporizador, verificarRespuesta, etc. siguen igual) ...
     iniciarTemporizador() {
         clearInterval(this.estado.intervaloID);
         this.estado.tiempoRestante = this.estado.tiempoActualPorPregunta;
@@ -159,15 +177,25 @@ class TriviaGame {
 
         if (porTiempo) {
             this.dom.mensaje.textContent = "⏱️ Tiempo agotado";
+            // Marcamos en rojo todas para indicar fallo
+            this.dom.botones.forEach(btn => btn.style.background = "#ff3b2f");
         } else if (esCorrecta) {
             this.estado.puntaje += this.config.puntosPorCorrecta;
             this.dom.mensaje.textContent = "✅ ¡Correcto!";
             this.actualizarPuntajeUI();
+            // Pintamos el botón presionado de verde (podríamos mejorarlo sabiendo cuál fue)
+             this.dom.botones.forEach(btn => {
+                 if(!btn.disabled) btn.style.background = "#00c6ff"; // Reset visual rápido
+             });
         } else {
             this.dom.mensaje.textContent = "❌ Incorrecto";
         }
 
-        setTimeout(() => this.siguientePregunta(), 1200);
+        setTimeout(() => {
+            // Resetear estilos de botones antes de la siguiente
+            this.dom.botones.forEach(btn => btn.style.background = ""); 
+            this.siguientePregunta();
+        }, 1200);
     }
     
     siguientePregunta() {
@@ -188,11 +216,20 @@ class TriviaGame {
         this.dom.btnReiniciar.style.display = "inline-block";
     }
 
-    actualizarPuntajeUI() { this.dom.puntaje.textContent = this.estado.puntaje; }
-    toggleBotones(habilitar) { this.dom.botones.forEach(btn => btn.disabled = !habilitar); }
+    actualizarPuntajeUI() { 
+        this.dom.puntaje.textContent = this.estado.puntaje; 
+    }
+    
+    toggleBotones(habilitar) { 
+        this.dom.botones.forEach(btn => btn.disabled = !habilitar); 
+    }
 }
 
+// Inicialización segura
 window.onload = () => {
-    const juego = new TriviaGame();
-    juego.iniciarJuego();
+    // Pequeño delay para asegurar carga del DOM
+    setTimeout(() => {
+        const juego = new TriviaGame();
+        juego.iniciarJuego();
+    }, 100);
 };
